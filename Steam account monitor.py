@@ -25,11 +25,25 @@ def check_online_status(profile_url):
             return f"{status}:\n{status_detailed}"
 
 
-# Test usage
-profile_url = "https://steamcommunity.com/id/geckuss/"
-username = check_name(profile_url)
-online_status = check_online_status(profile_url)
+def check_profile(profile_url):
+    response = requests.get(profile_url)
+    if response.status_code == 200:
+        pagecontent = BeautifulSoup(response.text, 'html.parser')
+        name_element = pagecontent.find('span', {'class': "actual_persona_name"})
+        profile_data = name_element.text.strip() + "\n"
+        status_element = pagecontent.find('div', {'class': "profile_in_game_header"})
+        profile_data += status_element.text.strip() + "\n"
+        status_detailed_element = pagecontent.find('div', {'class': "profile_in_game_name"})
+        if status_detailed_element != None:
+            profile_data += status_detailed_element.text.strip() + "\n"
+        return profile_data
 
-print(username)
-print(online_status)
+profile_url_list = [
+    "https://steamcommunity.com/id/geckuss/",
+    "https://steamcommunity.com/id/example_user/",
+    "https://steamcommunity.com/profiles/76561198146060221",
+    "https://steamcommunity.com/profiles/76561197994907256",
+]
+for profile_url in profile_url_list:
+    print(check_profile(profile_url))
 
