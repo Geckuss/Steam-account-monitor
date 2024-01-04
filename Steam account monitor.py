@@ -3,9 +3,9 @@ from bs4 import BeautifulSoup
 import threading
 
 
-def check_profile(profile_url):
+def check_profile(profile_url, results):
     #Request data
-    response = requests.get(profile_url)
+    response = requests.get(profile_url, results)
     if response.status_code == 200:
         #Get all profile data from url
         pagecontent = BeautifulSoup(response.text, 'html.parser')
@@ -23,7 +23,23 @@ def check_profile(profile_url):
         if status_detailed_element != None:
             #Add detailed profile status to profile data variable
             profile_data += status_detailed_element.text.strip() + "\n"
-        return profile_data
+        results.append(profile_data)
+
+def monitor_profiles(profile_url_list):
+    results = []
+    threads = []
+
+    # Create and start a thread for each profile URL
+    for profile_url in profile_url_list:
+        thread = threading.Thread(target=check_profile, args=(profile_url, results))
+        threads.append(thread)
+        thread.start()
+
+    # Wait for all threads to finish
+    for thread in threads:
+        thread.join()
+
+    return results
 
 #List of profiles to monitor
 profile_url_list = [
@@ -33,7 +49,6 @@ profile_url_list = [
     "https://steamcommunity.com/profiles/76561197994907256",
 ]
 
-
-for profile_url in profile_url_list:
-    print(check_profile(profile_url))
-
+results = monitor_profiles(profile_url_list)
+for result in results:
+    print(result)
