@@ -15,21 +15,45 @@ function App() {
     const storedGameName = localStorage.getItem('gameName');
     return storedGameName || '';
   });
-  const [isAlertSet, setIsAlertSet] = useState(false);
 
+  const [isAlertSet, setIsAlertSet] = useState(false);
   const alertSound = new Audio('./alert.mp3'); // Change the path to your sound file
 
+  const [apiKeyStatus, setApiKeyStatus] = useState(() => {
+    const storedApiKeyStatus = localStorage.getItem('apiKeyStatus');
+    return storedApiKeyStatus || 'Not Set';
+  });
+
+  useEffect(() => {
+    const storedApiKeyStatus = localStorage.getItem('apiKeyStatus');
+    setApiKeyStatus(storedApiKeyStatus || 'Not Set');
+  }, []);
 
   const handleInputChange = (e) => {
     setSteamId(e.target.value);
   };
-
 
   const isSteamIdValid = (steamId) => {
     const steamIdRegex = /^\d{17}$/;
     return steamIdRegex.test(steamId);
   };
 
+  const handleSetApiKey = () => {
+    const newApiKey = prompt('Enter your API key:');
+    if (newApiKey) {
+      axios.post('http://localhost:3000/setApiKey', { newApiKey })
+        .then(() => {
+          setApiKeyStatus('Set');
+          localStorage.setItem('apiKeyStatus', 'Set');
+          fetchData();
+        })
+        .catch((error) => {
+          console.error('Error setting API key:', error);
+          setApiKeyStatus('Error Setting');
+          localStorage.setItem('apiKeyStatus', 'Error Setting');
+        });
+    }
+  };
 
   const handleAddProfile = () => {
     if (isSteamIdValid(steamId)) {
@@ -69,36 +93,36 @@ function App() {
     handleGameNameChange;
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const profilesResponses = await Promise.all(
-          steamIds.map(async (steamId) => await axios.get(`http://localhost:3000/profile/${steamId}`))
+  const fetchData = async () => {
+    try {
+      const profilesResponses = await Promise.all(
+        steamIds.map(async (steamId) => await axios.get(`http://localhost:3000/profile/${steamId}`))
+      );
+
+      const profilesData = profilesResponses.map((response) => response.data);
+      setProfilesData(profilesData);
+      setError(null);
+
+      //Notification check
+      if (gameName && isAlertSet) {
+        const isGameBeingPlayed = profilesData.some(
+          (profile) => profile.onlineStatus === 'Online' && profile.gamePlaying === gameName
         );
-  
-        const profilesData = profilesResponses.map((response) => response.data);
-        setProfilesData(profilesData);
-        setError(null);
-
-        //Notification check
-        if (gameName && isAlertSet) {
-          const isGameBeingPlayed = profilesData.some(
-            (profile) => profile.onlineStatus === 'Online' && profile.gamePlaying === gameName
-          );
-          console.log(gameName,isAlertSet, isGameBeingPlayed)
-            if (isGameBeingPlayed && isAlertSet){
-              alertSound.play();
-              setIsAlertSet(false);
-            }
-            
-        }
-
-      } catch (error) {
-        setProfilesData([]);
-        setError('Error fetching profiles');
+        console.log(gameName,isAlertSet, isGameBeingPlayed)
+          if (isGameBeingPlayed && isAlertSet){
+            alertSound.play();
+            setIsAlertSet(false);
+          }
+          
       }
-    };
-  
+
+    } catch (error) {
+      setProfilesData([]);
+      setError('Error fetching profiles');
+    }
+  };
+
+  useEffect(() => {
     fetchData();
     const intervalId = setInterval(() => {
       fetchData();
@@ -133,15 +157,20 @@ function App() {
             placeholder="Enter game name"
           />
         </label>
-        <button className="action-button" onClick={handleSetAlert}>
-            {isAlertSet ? 'Cancel Alert' : 'Set Alert'}
-          </button>
+        
         </div>
-
+        <button className="action-button" onClick={handleSetAlert}>
+          {isAlertSet ? 'Cancel Alert' : 'Set Alert'}</button>
         <button className="action-button" onClick={handleAddProfile}>Add Profile</button>
         <button className="action-button" onClick={handleClearProfiles}>Clear All Profiles</button>
+        <button
+          className={`action-button ${apiKeyStatus === 'Set' ? 'set-api-key' : 'unset-api-key'}`}
+          onClick={handleSetApiKey}
+        >
+          Set API Key
+        </button>
       </div>
-  
+      
       {error && <p className="error-message">{error}</p>}
   
       {profilesData.length > 0 && (

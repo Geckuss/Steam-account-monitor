@@ -59,3 +59,11 @@
     font-style: italic;
   }
   
+  .action-button.set-api-key {
+    background-color: #4CAF50; /* Green color for Set API Key */
+  }
+  
+  .action-button.unset-api-key {
+    background-color: #FF0000; /* Red color for Unset API Key */
+  }
+  

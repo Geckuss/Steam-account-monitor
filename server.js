@@ -5,15 +5,28 @@ const cors = require('cors');
 const app = express();
 const port = 3000;
 
-const apiKey = '***REMOVED***'; // Replace with your actual API key
+let apiKey = ''; // Initialize APIkey
 
+app.use(express.json()); // Parse JSON request bodies
 app.use(cors());
 
 app.get('/', (req, res) => {
-    res.send('Welcome to backside of Steam Profile Monitor!');
+    res.send('Welcome to backside of Steam Profile Monitor! Remember to set your API key.');
+});
+
+app.post('/setApiKey', (req, res) => {
+    // Set the API key from the request body
+    const newApiKey = req.body.newApiKey;
+    apiKey = newApiKey;
+    console.log('API key set:', newApiKey);
+    res.json({ success: true, message: 'API key set successfully' });
 });
 
 app.get('/profile/:steamId', async (req, res) => {
+    // Check if the apiKey is set
+    if (!apiKey) {
+        return res.status(400).json({ error: 'API key not set. Please set the API key first.' });
+    }
     const steamId = req.params.steamId;
     try {
         const response = await axios.get(`http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${apiKey}&steamids=${steamId}`);
