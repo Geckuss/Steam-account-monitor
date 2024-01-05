@@ -109,11 +109,10 @@ function App() {
           (profile) => profile.onlineStatus === 'Online' && profile.gamePlaying === gameName
         );
         console.log(gameName,isAlertSet, isGameBeingPlayed)
-          if (isGameBeingPlayed && isAlertSet){
-            alertSound.play();
-            setIsAlertSet(false);
-          }
-          
+        if (isGameBeingPlayed && isAlertSet){
+          alertSound.play();
+          setIsAlertSet(false);
+        }
       }
 
     } catch (error) {
