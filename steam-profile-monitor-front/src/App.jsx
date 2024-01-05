@@ -41,7 +41,7 @@ function App() {
   const handleSetApiKey = () => {
     const newApiKey = prompt('Enter your API key:');
     if (newApiKey) {
-      axios.post('http://localhost:3000/setApiKey', { newApiKey })
+      axios.post('http://129.151.218.86:3000/setApiKey', { newApiKey })
         .then(() => {
           setApiKeyStatus('Set');
           localStorage.setItem('apiKeyStatus', 'Set');
@@ -96,7 +96,7 @@ function App() {
   const fetchData = async () => {
     try {
       const profilesResponses = await Promise.all(
-        steamIds.map(async (steamId) => await axios.get(`http://localhost:3000/profile/${steamId}`))
+        steamIds.map(async (steamId) => await axios.get(`http://129.151.218.86:3000/profile/${steamId}`))
       );
 
       const profilesData = profilesResponses.map((response) => response.data);

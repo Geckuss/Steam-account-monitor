@@ -5,16 +5,18 @@ const cors = require('cors');
 const app = express();
 const port = 3000;
 
-let apiKey = ''; // Initialize APIkey
+let apiKey = ''; // Initialize API key
 
 app.use(express.json()); // Parse JSON request bodies
 app.use(cors());
 
+app.options('/setApiKey', cors()); // Enable pre-flight for setApiKey route
+
 app.get('/', (req, res) => {
-    res.send('Welcome to backside of Steam Profile Monitor! Remember to set your API key.');
+    res.send('Welcome to the backside of Steam Profile Monitor! Remember to set your API key.');
 });
 
-app.post('/setApiKey', (req, res) => {
+app.post('/setApiKey', cors(), (req, res) => {
     // Set the API key from the request body
     const newApiKey = req.body.newApiKey;
     apiKey = newApiKey;
@@ -51,8 +53,6 @@ app.get('/profile/:steamId', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
-
-
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
