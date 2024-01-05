@@ -22,19 +22,23 @@ app.get('/profile/:steamId', async (req, res) => {
         // Check if the user is online
         const isOnline = profileData.personastate === 1; // 1 represents online
 
+        // Check if the user is actively playing a game
+        const isPlayingGame = isOnline && profileData.gameid !== undefined;
+
         res.json({
             steamid: profileData.steamid,
             personaname: profileData.personaname,
-            avatar: profileData.avatar,
+            avatar: profileData.avatarfull,
             onlineStatus: isOnline ? 'Online' : 'Offline',
-            gamePlaying: isOnline ? profileData.gameextrainfo || 'Playing a game' : null,
-            gameId: isOnline ? profileData.gameid || null : null,
+            gamePlaying: isPlayingGame ? profileData.gameextrainfo : null,
+            gameId: isPlayingGame ? profileData.gameid : null,
         });
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
     }
 });
+
 
 
 app.listen(port, () => {

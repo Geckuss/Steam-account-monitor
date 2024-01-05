@@ -1,5 +1,6 @@
 import React, { useState, useEffect  } from 'react';
 import axios from 'axios';
+import './styles.css';
 
 function App() {
   const [steamId, setSteamId] = useState('');
@@ -44,9 +45,12 @@ function App() {
     setProfilesData([]);
   };
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const profilesResponses = await Promise.all(
           steamIds.map(async (steamId) => await axios.get(`http://localhost:3000/profile/${steamId}`))
         );
@@ -54,42 +58,64 @@ function App() {
         const profilesData = profilesResponses.map((response) => response.data);
         setProfilesData(profilesData);
         setError(null);
+        console.log('Profiles data:', profilesData);
       } catch (error) {
         setProfilesData([]);
         setError('Error fetching profiles');
+      } finally {
+        setLoading(false);
       }
     };
   
     fetchData();
-  }, [steamIds]); // This useEffect will re-run whenever steamIds change
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 20 * 1000);
   
+    return () => clearInterval(intervalId);
+  }, [steamIds]);
   return (
-    <div>
+    <div className="app-container">
       <h1>Steam Profile Monitor</h1>
-      <label>
-        Enter Steam ID:
-        <input
-          type="text"
-          value={steamId}
-          onChange={handleInputChange}
-        />
-      </label>
-      <button onClick={handleAddProfile}>Add Profile</button>
-      <button onClick={handleClearProfiles}>Clear All Profiles</button>
-
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-
+      
+      <div className="input-container">
+        <label>
+          Enter Steam ID:
+          <input
+            type="text"
+            value={steamId}
+            onChange={handleInputChange}
+            placeholder="e.g., 76561197972495328"
+          />
+        </label>
+        <button className="action-button" onClick={handleAddProfile}>Add Profile</button>
+        <button className="action-button" onClick={handleClearProfiles}>Clear All Profiles</button>
+      </div>
+  
+      {error && <p className="error-message">{error}</p>}
+  
       {profilesData.length > 0 && (
-        <div>
-          <h2>Profiles Data</h2>
+        <div className="profiles-container">
           {profilesData.map((profileData, index) => (
-            <div key={index}>
-              <img src={profileData.avatar} alt={`Avatar for ${profileData.personaname}`} />
-              <p>{profileData.personaname}</p>
-              <p>{profileData.onlineStatus}</p>
+            <div 
+              key={index} 
+              className="profile-card"
+              style={{
+                background: profileData.onlineStatus === 'Online'
+                  ? (profileData.gameId ? '#90ba3c' : '#57cbde') // In-game or online
+                  : '#898989' // Offline
+              }}
+            >
+              <img
+                src={profileData.avatar}
+                alt={`Avatar for ${profileData.personaname}`}
+                className="avatar"
+              />
+              <p className="username">{profileData.personaname}</p>
+              <p className="status" style={{ color: '#4CAF50' }}>{profileData.onlineStatus}</p>
               {profileData.onlineStatus === 'Online' && profileData.gameId && (
                 <div>
-                  <p>Playing: {profileData.gamePlaying}</p>
+                  <p className="game-playing" style={{ fontStyle: 'italic' }}>Playing: {profileData.gamePlaying}</p>
                 </div>
               )}
             </div>
@@ -99,5 +125,4 @@ function App() {
     </div>
   );
 }
-
 export default App;
