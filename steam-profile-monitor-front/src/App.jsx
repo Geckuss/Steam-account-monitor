@@ -8,17 +8,28 @@ function App() {
     const storedSteamIds = localStorage.getItem('steamIds');
     return storedSteamIds ? JSON.parse(storedSteamIds) : [];
   });
+  
   const [profilesData, setProfilesData] = useState([]);
   const [error, setError] = useState(null);
+  const [gameName, setGameName] = useState(() => {
+    const storedGameName = localStorage.getItem('gameName');
+    return storedGameName || '';
+  });
+  const [isAlertSet, setIsAlertSet] = useState(false);
+
+  const alertSound = new Audio('./alert.mp3'); // Change the path to your sound file
+
 
   const handleInputChange = (e) => {
     setSteamId(e.target.value);
   };
 
+
   const isSteamIdValid = (steamId) => {
     const steamIdRegex = /^\d{17}$/;
     return steamIdRegex.test(steamId);
   };
+
 
   const handleAddProfile = () => {
     if (isSteamIdValid(steamId)) {
@@ -39,18 +50,28 @@ function App() {
     }
   };
 
+
   const handleClearProfiles = () => {
     localStorage.removeItem('steamIds');
     setSteamIds([]);
     setProfilesData([]);
   };
 
-  const [loading, setLoading] = useState(false);
+
+  const handleGameNameChange = (e) => {
+    const newGameName = e.target.value;
+    setGameName(newGameName);
+    localStorage.setItem('gameName', newGameName);
+  };
+
+  const handleSetAlert = () => {
+    setIsAlertSet(!isAlertSet);
+    handleGameNameChange;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
         const profilesResponses = await Promise.all(
           steamIds.map(async (steamId) => await axios.get(`http://localhost:3000/profile/${steamId}`))
         );
@@ -58,12 +79,23 @@ function App() {
         const profilesData = profilesResponses.map((response) => response.data);
         setProfilesData(profilesData);
         setError(null);
-        console.log('Profiles data:', profilesData);
+
+        //Notification check
+        if (gameName && isAlertSet) {
+          const isGameBeingPlayed = profilesData.some(
+            (profile) => profile.onlineStatus === 'Online' && profile.gamePlaying === gameName
+          );
+          console.log(gameName,isAlertSet, isGameBeingPlayed)
+            if (isGameBeingPlayed && isAlertSet){
+              alertSound.play();
+              setIsAlertSet(false);
+            }
+            
+        }
+
       } catch (error) {
         setProfilesData([]);
         setError('Error fetching profiles');
-      } finally {
-        setLoading(false);
       }
     };
   
@@ -73,7 +105,9 @@ function App() {
     }, 20 * 1000);
   
     return () => clearInterval(intervalId);
-  }, [steamIds]);
+  }, [steamIds, gameName]);
+
+
   return (
     <div className="app-container">
       <h1>Steam Profile Monitor</h1>
@@ -88,6 +122,22 @@ function App() {
             placeholder="e.g., 76561197972495328"
           />
         </label>
+
+        <div className="input-container">
+        <label>
+          Waiting for Game:
+          <input
+            type="text"
+            value={gameName}
+            onChange={handleGameNameChange}
+            placeholder="Enter game name"
+          />
+        </label>
+        <button className="action-button" onClick={handleSetAlert}>
+            {isAlertSet ? 'Cancel Alert' : 'Set Alert'}
+          </button>
+        </div>
+
         <button className="action-button" onClick={handleAddProfile}>Add Profile</button>
         <button className="action-button" onClick={handleClearProfiles}>Clear All Profiles</button>
       </div>
