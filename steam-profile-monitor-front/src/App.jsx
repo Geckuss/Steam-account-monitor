@@ -3,17 +3,42 @@ import axios from 'axios';
 
 function App() {
   const [steamId, setSteamId] = useState('');
-  const [profileData, setProfileData] = useState(null);
+  const [steamIds, setSteamIds] = useState([]);
+  const [profilesData, setProfilesData] = useState([]);
   const [error, setError] = useState(null);
+
+  const handleInputChange = (e) => {
+    setSteamId(e.target.value);
+  };
+
+  const isSteamIdValid = (steamId) => {
+    // Add your custom validation logic for Steam IDs
+    const steamIdRegex = /^\d{17}$/; // Steam IDs are 17 digits
+    return steamIdRegex.test(steamId);
+  };
+
+  const handleAddProfile = () => {
+    if (isSteamIdValid(steamId)) {
+      setSteamIds((prevIds) => [...prevIds, steamId]);
+      setSteamId('');
+      setError(null);
+    } else {
+      setError('Invalid Steam ID format');
+    }
+  };
 
   const handleSearch = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/profile/${steamId}`);
-      setProfileData(response.data);
+      const profilesResponses = await Promise.all(
+        steamIds.map(async (steamId) => await axios.get(`http://localhost:3000/profile/${steamId}`))
+      );
+      
+      const profilesData = profilesResponses.map((response) => response.data);
+      setProfilesData(profilesData);
       setError(null);
     } catch (error) {
-      setProfileData(null);
-      setError('Profile not found');
+      setProfilesData([]);
+      setError('Error fetching profiles');
     }
   };
 
@@ -25,19 +50,29 @@ function App() {
         <input
           type="text"
           value={steamId}
-          onChange={(e) => setSteamId(e.target.value)}
+          onChange={handleInputChange}
         />
       </label>
+      <button onClick={handleAddProfile}>Add Profile</button>
       <button onClick={handleSearch}>Search</button>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      {profileData && (
+      {profilesData.length > 0 && (
         <div>
-          <h2>Profile Data</h2>
-          <p>Steam ID: {profileData.steamid}</p>
-          <p>Username: {profileData.personaname}</p>
-          <img src={profileData.avatar} alt="Avatar" />
+          <h2>Profiles Data</h2>
+          {profilesData.map((profileData, index) => (
+            <div key={index}>
+              <p>Username: {profileData.personaname}</p>
+              <p>Status: {profileData.onlineStatus}</p>
+              {profileData.onlineStatus === 'Online' && profileData.gamePlaying && (
+                <div>
+                  <p>Playing: {profileData.gamePlaying}</p>
+                </div>
+              )}
+              <img src={profileData.avatar} alt={`Avatar for ${profileData.personaname}`} />
+            </div>
+          ))}
         </div>
       )}
     </div>
