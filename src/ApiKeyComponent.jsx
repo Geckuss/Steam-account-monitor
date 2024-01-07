@@ -2,13 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const ApiKeyComponent = ({ defaultApiKeyStatus = 'Not Set', fetchData }) => {
-  const [apiKeyStatus, setApiKeyStatus] = useState(defaultApiKeyStatus);
+const ApiKeyComponent = ({ defaultApiKeyStatus = 'Not Set', fetchData, setApiKeyStatus }) => {
+  const [localApiKeyStatus, setLocalApiKeyStatus] = useState(defaultApiKeyStatus);
 
   useEffect(() => {
     // Load API key status from local storage on component mount
     const storedApiKeyStatus = localStorage.getItem('apiKeyStatus');
-    setApiKeyStatus(storedApiKeyStatus || defaultApiKeyStatus);
+    setLocalApiKeyStatus(storedApiKeyStatus || defaultApiKeyStatus);
   }, [defaultApiKeyStatus]);
 
   const handleSetApiKey = () => {
@@ -17,21 +17,23 @@ const ApiKeyComponent = ({ defaultApiKeyStatus = 'Not Set', fetchData }) => {
       axios
         .post('https://www.geckuss.com/setApiKey', { newApiKey })
         .then(() => {
-          setApiKeyStatus('Set');
+          setLocalApiKeyStatus('Set');
           localStorage.setItem('apiKeyStatus', 'Set');
           fetchData();
+          setApiKeyStatus('Set'); // Communicate to the parent component
         })
         .catch((error) => {
           console.error('Error setting API key:', error);
-          setApiKeyStatus('Error Setting');
+          setLocalApiKeyStatus('Error Setting');
           localStorage.setItem('apiKeyStatus', 'Error Setting');
+          setApiKeyStatus('Error Setting'); // Communicate to the parent component
         });
     }
   };
 
   return (
     <button
-      className={`action-button ${apiKeyStatus === 'Set' ? 'set-api-key' : 'unset-api-key'}`}
+      className={`action-button ${localApiKeyStatus === 'Set' ? 'set-api-key' : 'unset-api-key'}`}
       onClick={handleSetApiKey}
     >
       Set API Key

@@ -1,4 +1,4 @@
-import React, { useState, useEffect  } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './styles.css';
 import ApiKeyComponent from './ApiKeyComponent';
@@ -9,7 +9,7 @@ function App() {
     const storedSteamIds = localStorage.getItem('steamIds');
     return storedSteamIds ? JSON.parse(storedSteamIds) : [];
   });
-  
+
   const [profilesData, setProfilesData] = useState([]);
   const [error, setError] = useState(null);
   const [gameName, setGameName] = useState(() => {
@@ -18,7 +18,6 @@ function App() {
   });
 
   const alertSound = new Audio('/steam-account-monitor/alert.mp3');
-  console.log('Alert sound path:', alertSound.src);
 
   const handleInputChange = (e) => {
     setSteamId(e.target.value);
@@ -29,10 +28,8 @@ function App() {
     return steamIdRegex.test(steamId);
   };
 
-
   const handleAddProfile = () => {
     if (isSteamIdValid(steamId)) {
-      // Check if the Steam ID already exists in the list
       if (steamIds.includes(steamId)) {
         setError('Profile already added');
       } else {
@@ -49,13 +46,11 @@ function App() {
     }
   };
 
-
   const handleClearProfiles = () => {
     localStorage.removeItem('steamIds');
     setSteamIds([]);
     setProfilesData([]);
   };
-
 
   const handleGameNameChange = (e) => {
     const newGameName = e.target.value;
@@ -68,25 +63,20 @@ function App() {
       const profilesResponses = await Promise.all(
         steamIds.map(async (steamId) => await axios.get(`https://www.geckuss.com/profile/${steamId}`))
       );
-  
+
       const profilesData = profilesResponses.map((response) => response.data);
-      console.log("Profile data:",profilesResponses.map((response) => response.data))
       setProfilesData(profilesData);
       setError(null);
-      
-      // Notification check
+
       if (gameName.trim() !== '') {
-        console.log("Waiting for",gameName,"to be played")
         const isGameBeingPlayed = profilesData.some(
           (profile) => profile.onlineStatus === 'Online' && profile.gamePlaying.toLowerCase() === gameName.toLowerCase()
-        );        
-        console.log("Is the game being played?", isGameBeingPlayed)
+        );
+
         if (isGameBeingPlayed) {
-          console.log("Playing alarm")
           alertSound.play();
         }
       }
-  
     } catch (error) {
       setProfilesData([]);
       setError('Error fetching profiles');
@@ -98,7 +88,7 @@ function App() {
     const intervalId = setInterval(() => {
       fetchData();
     }, 20000);
-  
+
     return () => clearInterval(intervalId);
   }, [steamIds, gameName]);
 
@@ -107,7 +97,7 @@ function App() {
   return (
     <div className="app-container">
       <h1>Steam Profile Monitor</h1>
-      
+
       <div className="input-container">
         <label>
           Enter Steam ID:
@@ -119,7 +109,6 @@ function App() {
           />
         </label>
 
-        <div className="input-container">
         <label>
           Waiting for Game:
           <input
@@ -129,9 +118,7 @@ function App() {
             placeholder="Enter game name"
           />
         </label>
-        
-        </div>
-        {/* Pass new state and handlers to the updated ApiKeyComponent */}
+
         <ApiKeyComponent
           apiKeyStatus={apiKeyStatus}
           setApiKeyStatus={setApiKeyStatus}
@@ -139,20 +126,19 @@ function App() {
         />
         <button className="action-button" onClick={handleAddProfile}>Add Profile</button>
         <button className="action-button" onClick={handleClearProfiles}>Clear All Profiles</button>
-        
       </div>
       {error && <p className="error-message">{error}</p>}
-  
+
       {profilesData.length > 0 && (
         <div className="profiles-container">
           {profilesData.map((profileData, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className="profile-card"
               style={{
                 background: profileData.onlineStatus === 'Online'
-                  ? (profileData.gameId ? '#90ba3c' : '#57cbde') // In-game or online
-                  : '#898989' // Offline
+                  ? (profileData.gameId ? '#90ba3c' : '#57cbde')
+                  : '#898989'
               }}
             >
               <img
@@ -174,4 +160,5 @@ function App() {
     </div>
   );
 }
+
 export default App;
