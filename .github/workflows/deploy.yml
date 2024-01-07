@@ -33,7 +33,7 @@ jobs:
 
       - name: Set up Node (Front End)
         run: |
-          cd steam-account-monitor/steam-account-monitor-front
+          cd /github/workspace/steam-account-monitor/steam-account-monitor-front
           npm install
         shell: bash
         
