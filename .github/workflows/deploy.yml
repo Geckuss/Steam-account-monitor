@@ -30,12 +30,14 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+      - name: Set working directory
+        run: cd steam-account-monitor/steam-account-monitor-front
 
       - name: Set up Node (Front End)
-        run: |
-          cd /github/workspace/steam-account-monitor/steam-account-monitor-front
-          npm install
-        shell: bash
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: 'npm'
         
       - name: Install dependencies (Front End)
         run: npm install
