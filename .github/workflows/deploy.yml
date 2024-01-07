@@ -43,6 +43,7 @@ jobs:
   deploy-frontend:
     environment:
       name: github-pages-frontend
+      url: https://geckuss.github.io/Steam-account-monitor
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
