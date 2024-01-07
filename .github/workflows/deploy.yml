@@ -1,5 +1,5 @@
-# Complex workflow for deploying back end and front end to GitHub Pages
-name: Deploy Front End to Pages
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
 
 on:
   # Runs on pushes targeting the default branch
@@ -21,42 +21,31 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Deploy front end job
-  deploy-frontend:
+  # Single deploy job since we're just deploying
+  deploy:
     environment:
-      name: github-pages-frontend
-      url: https://geckuss.github.io/steam-account-monitor
+      name: github-pages
+      url: https://geckuss.github.io/Steam-account-monitor/
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-        
-      - name: Set up Node (Front End)
-        run: |
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
-          export NVM_DIR="$HOME/.nvm"
-          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-          nvm install 16
-          npm install
-        shell: bash
-        working-directory: steam-account-monitor-front
-
-        
-      - name: Install dependencies (Front End)
-        run: npm install
-        working-directory: steam-account-monitor/steam-account-monitor-front
-        # Add the following line to specify the lock file location
-        env:
-          NODE_MODULES_CACHE: steam-account-monitor/steam-account-monitor-front/node_modules
-
-      - name: Build (Front End)
-        run: npm run build
-        working-directory: steam-account-monitor-front
-
-      - name: Deploy to GitHub Pages (Front End)
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./steam-account-monitor-front/dist
-
-# You can add more jobs for additional steps, such as testing, linting, etc.
+          node-version: 18
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          # Upload dist repository
+          path: './dist'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
