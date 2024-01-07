@@ -38,7 +38,10 @@ jobs:
           cache: 'npm'
       - name: Install dependencies (Front End)
         run: npm install
-        working-directory: steam-account-monitor-front
+        working-directory: steam-account-monitor/steam-account-monitor-front
+        # Add the following line to specify the lock file location
+        env:
+          NODE_MODULES_CACHE: steam-account-monitor/steam-account-monitor-front/node_modules
 
       - name: Build (Front End)
         run: npm run build
