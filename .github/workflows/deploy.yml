@@ -30,6 +30,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+      - name: List directory contents
+        run: ls -R
       - name: Set working directory
         run: cd steam-account-monitor/steam-account-monitor-front
 
