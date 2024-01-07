@@ -30,10 +30,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: List directory contents
-        run: ls -R
+        
       - name: Set working directory
-        run: cd steam-account-monitor/steam-account-monitor-front
+        run: cd steam-account-monitor-front
 
       - name: Set up Node (Front End)
         uses: actions/setup-node@v2
