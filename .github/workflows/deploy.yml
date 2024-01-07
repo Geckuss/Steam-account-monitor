@@ -33,14 +33,13 @@ jobs:
         
       - name: Set up Node (Front End)
         run: |
-          cd steam-account-monitor/steam-account-monitor-front
           curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
           export NVM_DIR="$HOME/.nvm"
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
           nvm install 16
           npm install
         shell: bash
-        working-directory: steam-account-monitor/steam-account-monitor-front
+        working-directory: steam-account-monitor-front
 
         
       - name: Install dependencies (Front End)
