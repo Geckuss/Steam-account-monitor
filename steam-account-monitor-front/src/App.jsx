@@ -17,7 +17,8 @@ function App() {
     return storedGameName || '';
   });
 
-  const alertSound = new Audio('/alert.mp3');
+  const alertSound = new Audio('/steam-account-monitor/alert.mp3');
+  console.log('Alert sound path:', alertSound.src);
 
   const handleInputChange = (e) => {
     setSteamId(e.target.value);

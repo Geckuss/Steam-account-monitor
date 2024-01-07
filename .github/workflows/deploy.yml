@@ -21,29 +21,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Deploy back end job
-  deploy-backend:
-    environment:
-      name: github-pages-backend
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Set up Node (Back End)
-        uses: actions/setup-node@v2
-        with:
-          node-version: 14
-          cache: 'npm'
-      - name: Install dependencies (Back End)
-        run: npm install
-        working-directory: steam-account-monitor-backend
-
   # Deploy front end job
   deploy-frontend:
     environment:
       name: github-pages-frontend
-      url: https://geckuss.github.io/Steam-account-monitor
+      url: https://geckuss.github.io/steam-account-monitor
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
