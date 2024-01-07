@@ -25,7 +25,7 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: https://geckuss.github.io/Steam-account-monitor/
+      url: https://geckuss.github.io/steam-account-monitor/
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
