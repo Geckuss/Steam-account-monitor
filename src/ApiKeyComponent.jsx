@@ -15,7 +15,7 @@ const ApiKeyComponent = ({ defaultApiKeyStatus = 'Not Set', fetchData }) => {
     const newApiKey = prompt('Enter your API key:');
     if (newApiKey) {
       axios
-        .post('http://129.151.218.86:3000/setApiKey', { newApiKey })
+        .post('https://129.151.218.86:3000/setApiKey', { newApiKey })
         .then(() => {
           setApiKeyStatus('Set');
           localStorage.setItem('apiKeyStatus', 'Set');

@@ -66,7 +66,7 @@ function App() {
   const fetchData = async () => {
     try {
       const profilesResponses = await Promise.all(
-        steamIds.map(async (steamId) => await axios.get(`http://129.151.218.86:3000/profile/${steamId}`))
+        steamIds.map(async (steamId) => await axios.get(`https://129.151.218.86:3000/profile/${steamId}`))
       );
   
       const profilesData = profilesResponses.map((response) => response.data);
