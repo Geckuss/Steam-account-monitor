@@ -31,14 +31,17 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
         
-      - name: Set working directory
-        run: cd steam-account-monitor-front
-
       - name: Set up Node (Front End)
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16
-          cache: 'npm'
+        run: |
+          cd steam-account-monitor/steam-account-monitor-front
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+          nvm install 16
+          npm install
+        shell: bash
+        working-directory: steam-account-monitor/steam-account-monitor-front
+
         
       - name: Install dependencies (Front End)
         run: npm install
