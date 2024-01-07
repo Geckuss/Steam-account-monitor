@@ -61,18 +61,18 @@ function App() {
   const fetchData = async () => {
     try {
       const profilesResponses = await Promise.all(
-        steamIds.map(async (steamId) => await axios.get(`https://www.geckuss.com/profile/${steamId}`))
+        steamIds.map(async (steamId) => await axios.get(`https://www.geckuss.com/profile/${steamId}`, { withCredentials: true }))
       );
-
+  
       const profilesData = profilesResponses.map((response) => response.data);
       setProfilesData(profilesData);
       setError(null);
-
+  
       if (gameName.trim() !== '') {
         const isGameBeingPlayed = profilesData.some(
           (profile) => profile.onlineStatus === 'Online' && profile.gamePlaying.toLowerCase() === gameName.toLowerCase()
         );
-
+  
         if (isGameBeingPlayed) {
           alertSound.play();
         }
@@ -82,9 +82,9 @@ function App() {
       setError('Error fetching profiles');
     }
   };
+  
 
   useEffect(() => {
-    fetchData();
     const intervalId = setInterval(() => {
       fetchData();
     }, 20000);

@@ -15,7 +15,7 @@ const ApiKeyComponent = ({ defaultApiKeyStatus = 'Not Set', fetchData, setApiKey
     const newApiKey = prompt('Enter your API key:');
     if (newApiKey) {
       axios
-        .post('https://www.geckuss.com/setApiKey', { newApiKey })
+        .post('https://www.geckuss.com/setApiKey', { newApiKey }, { withCredentials: true })  // Add withCredentials: true
         .then(() => {
           setLocalApiKeyStatus('Set');
           localStorage.setItem('apiKeyStatus', 'Set');
