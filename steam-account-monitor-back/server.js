@@ -8,7 +8,11 @@ const port = 3000;
 let apiKey = ''; // Initialize API key
 
 app.use(express.json()); // Parse JSON request bodies
-app.use(cors());
+app.use(cors({
+    origin: 'https://geckuss.github.io',  // Replace with your GitHub Pages domain
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+  }));
 
 app.options('/setApiKey', cors()); // Enable pre-flight for setApiKey route
 
@@ -55,5 +59,5 @@ app.get('/profile/:steamId', async (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Server is running at https://localhost:${port}`);
+    console.log(`Server is running at http://localhost:${port}`);
 });
