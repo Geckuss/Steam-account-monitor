@@ -77,8 +77,8 @@ function App() {
       if (gameName.trim() !== '') {
         console.log("Waiting for",gameName,"to be played")
         const isGameBeingPlayed = profilesData.some(
-          (profile) => profile.onlineStatus === 'Online' && profile.gamePlaying === gameName
-        );
+          (profile) => profile.onlineStatus === 'Online' && profile.gamePlaying.toLowerCase() === gameName.toLowerCase()
+        );        
         console.log("Is the game being played?", isGameBeingPlayed)
         if (isGameBeingPlayed) {
           console.log("Playing alarm")
