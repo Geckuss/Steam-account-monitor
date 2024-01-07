@@ -3,8 +3,6 @@ import axios from 'axios';
 import './styles.css';
 import ApiKeyComponent from './ApiKeyComponent';
 
-
-
 function App() {
   const [steamId, setSteamId] = useState('');
   const [steamIds, setSteamIds] = useState(() => {
@@ -19,7 +17,7 @@ function App() {
     return storedGameName || '';
   });
 
-  const alertSound = new Audio('./alert.mp3'); // Change the path to your sound file
+  const alertSound = new Audio('/alert.mp3');
 
   const handleInputChange = (e) => {
     setSteamId(e.target.value);
@@ -76,7 +74,7 @@ function App() {
       setError(null);
       
       // Notification check
-      if (gameName) {
+      if (gameName.trim() !== '') {
         console.log("Waiting for",gameName,"to be played")
         const isGameBeingPlayed = profilesData.some(
           (profile) => profile.onlineStatus === 'Online' && profile.gamePlaying === gameName

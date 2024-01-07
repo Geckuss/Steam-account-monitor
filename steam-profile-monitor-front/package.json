@@ -1,14 +1,15 @@
 {
   "name": "steam-profile-monitor-front",
-  "private": true,
+  "private": false,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://github.com/Geckuss/Steam-account-monitor",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "deploy": "gh-pages -d dist"
+    "deploy": "vite deploy"
   },
   "dependencies": {
     "axios": "^1.6.4",
@@ -24,6 +25,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "gh-pages": "^6.1.1",
-    "vite": "^5.0.8"
+    "vite": "^5.0.8",
+    "vite-plugin-gh-pages": "^0.4.1"
   }
 }
