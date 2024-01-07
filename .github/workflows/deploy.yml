@@ -1,5 +1,5 @@
 # Complex workflow for deploying back end and front end to GitHub Pages
-name: Deploy Back End and Front End to Pages
+name: Deploy Front End to Pages
 
 on:
   # Runs on pushes targeting the default branch
@@ -34,7 +34,7 @@ jobs:
       - name: Set up Node (Front End)
         uses: actions/setup-node@v2
         with:
-          node-version: 14
+          node-version: 16
           cache: 'npm'
       - name: Install dependencies (Front End)
         run: npm install
