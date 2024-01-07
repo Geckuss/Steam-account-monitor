@@ -1,5 +1,5 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+# Complex workflow for deploying back end and front end to GitHub Pages
+name: Deploy Back End and Front End to Pages
 
 on:
   # Runs on pushes targeting the default branch
@@ -21,31 +21,50 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
+  # Deploy back end job
+  deploy-backend:
     environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      name: github-pages-backend
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Node
-        uses: actions/setup-node@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node (Back End)
+        uses: actions/setup-node@v2
         with:
-          node-version: 18
+          node-version: 14
           cache: 'npm'
-      - name: Install dependencies
+      - name: Install dependencies (Back End)
         run: npm install
-      - name: Build
-        run: npm run build
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        working-directory: steam-account-monitor-backend
+
+  # Deploy front end job
+  deploy-frontend:
+    environment:
+      name: github-pages-frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node (Front End)
+        uses: actions/setup-node@v2
         with:
-          # Upload dist repository
-          path: './dist'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+          node-version: 14
+          cache: 'npm'
+      - name: Install dependencies (Front End)
+        run: npm install
+        working-directory: steam-account-monitor-front
+
+      - name: Build (Front End)
+        run: npm run build
+        working-directory: steam-account-monitor-front
+
+      - name: Deploy to GitHub Pages (Front End)
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./steam-account-monitor-front/dist
+
+# You can add more jobs for additional steps, such as testing, linting, etc.
