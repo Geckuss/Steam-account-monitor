@@ -1,40 +1,29 @@
 const express = require('express');
 const axios = require('axios');
-const cors = require('cors');
+const cors = require('cors')
 
 const app = express();
 const port = 3000;
+// Update the cors middleware to explicitly allow your GitHub Pages domain
+app.use(cors({ 
+    origin: 'https://geckuss.github.io',
+    credentials: true
+}));
 
 let apiKey = ''; // Initialize API key
 
 app.use(express.json()); // Parse JSON request bodies
 
-app.use(cors({
-  origin: (origin, callback) => {
-    // Define the allowed origin(s)
-    const allowedOrigin = 'https://geckuss.github.io'; // Replace with your GitHub Pages domain
-
-    // Check if the origin is allowed
-    if (!origin || origin === allowedOrigin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-}));
-
-// Enable pre-flight for all routes
-app.options('*', cors());
+app.options('/setApiKey', cors()); // Enable pre-flight for setApiKey route
 
 app.get('/', (req, res) => {
   res.send('Welcome to the backside of Steam Profile Monitor! Remember to set your API key.');
 });
 
-app.post('/setApiKey', cors(), (req, res) => {
+app.post('/setApiKey', (req, res) => {
   // Set the API key from the request body
   const newApiKey = req.body.newApiKey;
+  console.log(newApiKey);
   apiKey = newApiKey;
   console.log('API key set:', newApiKey);
   res.json({ success: true, message: 'API key set successfully' });

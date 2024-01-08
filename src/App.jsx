@@ -85,6 +85,7 @@ function App() {
   
 
   useEffect(() => {
+    fetchData();
     const intervalId = setInterval(() => {
       fetchData();
     }, 20000);
