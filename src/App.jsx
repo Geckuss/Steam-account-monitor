@@ -71,7 +71,7 @@ function App() {
   
       if (gameName.trim() !== '') {
         const isGameBeingPlayed = profilesData.some(
-          (profile) => profile.onlineStatus === 'Online' && profile.gamePlaying.toLowerCase() === gameName.toLowerCase()
+          (profile) => profile.onlineStatus === 'Online' && profile.gamePlaying?.toLowerCase() === gameName.toLowerCase()
         );
   
         if (isGameBeingPlayed) {
