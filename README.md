@@ -29,7 +29,9 @@ It is virtually possible to add endless amount of steam profiles
 ![image](https://github.com/Geckuss/steam-account-monitor/assets/58637152/28777419-d545-413d-921d-91e2172fb6c5)
 
 There are three different states for the profiles: Online (Playing a game), Online, and Offline.
-If Waiting for Game: contains text, website will check every 20 seconds is someone playing that game. If someone is playing, website will play alarm sound.
+If Waiting for Game: contains text, website will check every 20 seconds is someone playing that game. 
+If someone is playing, website will play alarm sound.
+
 ![image](https://github.com/Geckuss/steam-account-monitor/assets/58637152/3358eba9-885d-4920-bc40-2afc48403b3c)
 
 Clear all button clears the list of steam id's to be monitored
