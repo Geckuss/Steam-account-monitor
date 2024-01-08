@@ -15,6 +15,7 @@ If you don't have API key, you can get one from https://steamcommunity.com/dev/a
 API key gets sent into backend (hosted in Oracle cloud instance) via https, to be used in future API calls
 
 Succesfult API key set should look like this:
+
 ![image](https://github.com/Geckuss/steam-account-monitor/assets/58637152/ea9c8758-8f4e-4b9a-b4eb-414d76959379)
 
 Next step is to add profiles to be monitored. Input desired profiles steam id and press "Add Profile" (go to any profile and copy https://steamcommunity.com/profiles/[STEAM_ID] from the address) (If someone is using vanity URL, you need to go to https://www.steamidfinder.com/ to copy the steam id)
@@ -26,6 +27,7 @@ Next step is to add profiles to be monitored. Input desired profiles steam id an
 ![image](https://github.com/Geckuss/steam-account-monitor/assets/58637152/71c9e3bc-c466-4c4e-86fb-15e4f2d3d145)
 
 It is virtually possible to add endless amount of steam profiles
+
 ![image](https://github.com/Geckuss/steam-account-monitor/assets/58637152/28777419-d545-413d-921d-91e2172fb6c5)
 
 There are three different states for the profiles: Online (Playing a game), Online, and Offline.
