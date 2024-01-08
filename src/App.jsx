@@ -54,6 +54,7 @@ function App() {
 
   const handleGameNameChange = (e) => {
     const newGameName = e.target.value;
+    console.log('New gameName:', newGameName);
     setGameName(newGameName);
     localStorage.setItem('gameName', newGameName);
   };
